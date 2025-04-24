@@ -43,14 +43,34 @@ public_users.get('/isbn/:isbn', function (req, res) {
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
-  //Write your code here
-  return res.status(300).json({ message: 'Yet to be implemented' });
+  const author = req.params.author.replace(/[-_.]/gi, ' ').toLowerCase();
+  const filterByAuthor = (authorName) => {
+    return Object.values(books).filter((book) =>
+      book.author.toLowerCase().includes(authorName.toLowerCase())
+    );
+  };
+  const filteredBooksByAuthor = filterByAuthor(author);
+  if (filteredBooksByAuthor.length > 0) {
+    return res.status(200).send(JSON.stringify(filteredBooksByAuthor));
+  } else {
+    return res.status(404).json({ message: 'No books by that author.' });
+  }
 });
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
-  //Write your code here
-  return res.status(300).json({ message: 'Yet to be implemented' });
+  const bookTitle = req.params.title.replace(/[-_.]/gi, ' ').toLowerCase();
+  const filterByTitle = (title) => {
+    return Object.values(books).filter((book) =>
+      book.title.toLowerCase().includes(title.toLowerCase())
+    );
+  };
+  const filteredBooksByTitle = filterByTitle(bookTitle);
+  if (filteredBooksByTitle.length > 0) {
+    return res.status(200).send(JSON.stringify(filteredBooksByTitle));
+  } else {
+    return res.status(404).json({ message: 'No books with that title.' });
+  }
 });
 
 //  Get book review
