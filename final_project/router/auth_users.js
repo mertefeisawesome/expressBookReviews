@@ -1,67 +1,70 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-let books = require("./booksdb.js");
+let books = require('./booksdb.js');
 const regd_users = express.Router();
 
-let users = [{"username" : "admin", "email" : "admin@example.com", "password" : "12345678"}];
+let users = [
+  { username: 'admin', email: 'admin@example.com', password: '12345678' },
+];
 
-const isValid = (username)=>{ //returns boolean
+const isValid = (username) => {
+  //returns boolean
   if (!username) {
     return false;
   }
 
   users.forEach((user) => {
-    console.log("checking if " + user.username + " equals " + username);
+    console.log('checking if ' + user.username + ' equals ' + username);
     if (user.username == username) {
       return false;
     }
   });
 
   return true;
-}
+};
 
-const authenticatedUser = (username,password)=>{ //returns boolean
+const authenticatedUser = (username, password) => {
+  //returns boolean
   const user = users.filter((user) => user.username == username)[0];
   if (user && user.password == password) {
-    
     return true;
-  
   } else {
-  
     return false;
-  
   }
-  
-}
+};
 
 //only registered users can login
-regd_users.post("/login", (req,res) => {
+regd_users.post('/login', (req, res) => {
   if (req.body.username && req.body.password) {
     if (authenticatedUser(req.body.username, req.body.password)) {
-      
-      let accessToken = jwt.sign({
-        data: req.body.username        
-      }, "access", {expiresIn: 60 * 60});
+      let accessToken = jwt.sign(
+        {
+          data: req.body.username,
+        },
+        'access',
+        { expiresIn: 60 * 60 }
+      );
 
       req.session.authorization = {
-        accessToken
+        accessToken,
       };
 
-      return res.status(200).json({message: "Succesfully logged in."});
-
+      return res.status(200).json({ message: 'Succesfully logged in.' });
     } else {
-      
-      return res.status(401).json({message: "Please check your info and try again."});
-    
+      return res
+        .status(401)
+        .json({ message: 'Please check your info and try again.' });
     }
   }
-  return res.status(401).json({message: "Please fill in both password and username."});
+  return res
+    .status(401)
+    .json({ message: 'Please fill in both password and username.' });
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
+regd_users.put('/auth/review/:isbn', (req, res) => {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  return res.status(300).json({ message: 'Yet to be implemented' });
 });
 
 module.exports.authenticated = regd_users;
