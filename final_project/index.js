@@ -19,10 +19,10 @@ app.use("/customer/auth/*", function auth(req,res,next){
             if (!err) {
                 req.user = user;
                 next();
-            } else {
-                return res.status(403).json({message: "User is not logged in"})
-            }
+            } 
         })
+    } else {
+        return res.status(403).json({message: "User is not logged in"})
     }
 });
  
