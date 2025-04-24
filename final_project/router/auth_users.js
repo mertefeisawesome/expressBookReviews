@@ -14,7 +14,6 @@ const isValid = (username) => {
   }
 
   users.forEach((user) => {
-    console.log('checking if ' + user.username + ' equals ' + username);
     if (user.username == username) {
       return false;
     }
@@ -45,6 +44,8 @@ regd_users.post('/login', (req, res) => {
         { expiresIn: 60 * 60 }
       );
 
+      req.session.username = req.body.username;
+
       req.session.authorization = {
         accessToken,
       };
@@ -63,8 +64,19 @@ regd_users.post('/login', (req, res) => {
 
 // Add a book review
 regd_users.put('/auth/review/:isbn', (req, res) => {
-  //Write your code here
-  return res.status(300).json({ message: 'Yet to be implemented' });
+  const isbn = req.params.isbn;
+  if (books[isbn]) {
+    books[isbn].reviews[req.session.username] = req.body.review;
+    return res.status(200).json({
+      message:
+        'Your review is updated for book with ISBN ' +
+        isbn +
+        ' as follows: ' +
+        req.body.review,
+    });
+  } else {
+    return res.status(404).json({ message: 'There is no book with this ISBN' });
+  }
 });
 
 module.exports.authenticated = regd_users;
