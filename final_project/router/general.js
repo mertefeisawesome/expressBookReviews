@@ -62,14 +62,14 @@ public_users.get('/isbn/:isbn', function (req, res) {
 });
 
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+public_users.get('/author/:author', async (req, res) => {
   const author = req.params.author.replace(/[-_.]/gi, ' ').toLowerCase();
   const filterByAuthor = (authorName) => {
     return Object.values(books).filter((book) =>
       book.author.toLowerCase().includes(authorName.toLowerCase())
     );
   };
-  const filteredBooksByAuthor = filterByAuthor(author);
+  const filteredBooksByAuthor = await filterByAuthor(author);
   if (filteredBooksByAuthor.length > 0) {
     return res.status(200).send(JSON.stringify(filteredBooksByAuthor));
   } else {
@@ -78,14 +78,14 @@ public_users.get('/author/:author', function (req, res) {
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title', async (req, res) => {
   const bookTitle = req.params.title.replace(/[-_.]/gi, ' ').toLowerCase();
   const filterByTitle = (title) => {
     return Object.values(books).filter((book) =>
       book.title.toLowerCase().includes(title.toLowerCase())
     );
   };
-  const filteredBooksByTitle = filterByTitle(bookTitle);
+  const filteredBooksByTitle = await filterByTitle(bookTitle);
   if (filteredBooksByTitle.length > 0) {
     return res.status(200).send(JSON.stringify(filteredBooksByTitle));
   } else {
