@@ -26,19 +26,39 @@ public_users.post('/register', (req, res) => {
   }
 });
 
+function getAllBooks() {
+  return books;
+}
+
 // Get the book list available in the shop
-public_users.get('/', function (req, res) {
-  return res.status(200).send(JSON.stringify(books));
+public_users.get('/', async (req, res) => {
+  try {
+    return res.status(200).send(JSON.stringify(await getAllBooks()));
+  } catch (e) {
+    res.status(500).send(e);
+  }
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
   const isbn = req.params.isbn;
-  if (books[isbn]) {
+  /*if (books[isbn]) {
     return res.status(200).send(JSON.stringify(books[isbn]));
   } else {
     return res.status(404).json({ message: 'No books with this ISBN' });
-  }
+  }*/
+  const searchByIsbn = new Promise((resolve, reject) => {
+    const filteredBook = books[isbn];
+    if (filteredBook) {
+      resolve(filteredBook);
+    } else {
+      reject(e);
+    }
+  });
+
+  searchByIsbn
+    .then((filteredBook) => res.status(200).send(JSON.stringify(filteredBook)))
+    .catch((e) => res.status(404).json({ message: 'No books with this ISBN' }));
 });
 
 // Get book details based on author
